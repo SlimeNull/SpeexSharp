@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeexSharp", "SpeexSharp\SpeexSharp.csproj", "{4D13685D-C448-4E65-AABE-0DA9EDD156E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{6FAD3018-ED34-4743-83F5-F2AD7991273A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D13685D-C448-4E65-AABE-0DA9EDD156E8}.Debug|x86.ActiveCfg = Debug|x86
+		{4D13685D-C448-4E65-AABE-0DA9EDD156E8}.Debug|x86.Build.0 = Debug|x86
+		{4D13685D-C448-4E65-AABE-0DA9EDD156E8}.Release|x86.ActiveCfg = Release|x86
+		{4D13685D-C448-4E65-AABE-0DA9EDD156E8}.Release|x86.Build.0 = Release|x86
+		{6FAD3018-ED34-4743-83F5-F2AD7991273A}.Debug|x86.ActiveCfg = Debug|x86
+		{6FAD3018-ED34-4743-83F5-F2AD7991273A}.Debug|x86.Build.0 = Debug|x86
+		{6FAD3018-ED34-4743-83F5-F2AD7991273A}.Release|x86.ActiveCfg = Release|x86
+		{6FAD3018-ED34-4743-83F5-F2AD7991273A}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C707C44A-82ED-4954-9CB7-425A42BF1E2F}
+	EndGlobalSection
+EndGlobal
