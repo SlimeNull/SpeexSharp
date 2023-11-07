@@ -1,6 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SpeexSharp;
 using SpeexSharp.Native;
 
 var pcmFileName = "Oriens.pcm";
@@ -9,89 +9,85 @@ var outputPcmFileName = "Oriens_output.pcm";
 
 unsafe
 {
-    SpeexBits encodeBits = new SpeexBits();
-    SpeexBits decodeBits = new SpeexBits();
+    // speex mode
+    var mode = SpeexSharp.SpeexMode.Narrowband;
 
-    var mode = Speex.WbMode;
-    var encoderState = Speex.EncoderInit(mode);
-    var decoderState = Speex.DecoderInit(mode);
+    // init encoder and decoder
+    using var encoder = new SpeexEncoder(mode);
+    using var decoder = new SpeexDecoder(mode);
 
-    Speex.BitsInit(&encodeBits);
-    Speex.BitsInit(&decodeBits);
-
+    // read test file content
     byte[] pcmBytes = File.ReadAllBytes(pcmFileName);
 
-    int paddedLength = GetPaddedLength(pcmBytes.Length / 2, 320);
+
+    // convert to samples
+    int paddedLength = GetPaddedLength(pcmBytes.Length / 2, encoder.FrameSize);
     short[] samples = new short[paddedLength];
     for (int i = 0; i < pcmBytes.Length; i += 2)
         samples[i / 2] = BitConverter.ToInt16(pcmBytes, i);
 
+
+    // save encoded content for decoding
     MemoryStream speexStream = new MemoryStream();
 
+
+    // output files
     using FileStream outputSpeex = File.Create(outputSpeexFileName);
     using FileStream outputPcm = File.Create(outputPcmFileName);
-    short[] buffer = new short[320];
 
-    fixed (short* samplesPtr = samples)
+
+    // encode
+    for (int i = 0; i < samples.Length; i += encoder.FrameSize)
     {
-        for (int i = 0; i < samples.Length; i += 320)
-        {
-            int end = Math.Min(i + 320, samples.Length);
-            int len = end - i;
+        Span<short> inputSpan = new Span<short>(samples, i, encoder.FrameSize);
+        int count = encoder.EncodeInt(inputSpan);
 
-            Speex.BitsReset(&encodeBits);
-            Speex.EncodeInt(encoderState, samplesPtr + i, &encodeBits);
+        byte[] encodeBuffer = new byte[count];
+        encoder.Write(encodeBuffer, 0, encodeBuffer.Length);
 
-            byte[] encodeBuffer = new byte[encodeBits.BitCount / 8];
-            fixed (byte* encodeBufferPtr = encodeBuffer)
-            {
-                int writen = Speex.BitsWrite(&encodeBits, encodeBufferPtr, encodeBuffer.Length);
+        speexStream.WriteByte((byte)count);
+        outputSpeex.WriteByte((byte)count);
+        speexStream.Write(encodeBuffer, 0, count);
+        outputSpeex.Write(encodeBuffer, 0, count);
 
-                if (writen > 255)
-                    throw new InvalidOperationException();
-
-                speexStream.WriteByte((byte)writen);
-                outputSpeex.WriteByte((byte)writen);
-                speexStream.Write(encodeBuffer, 0, writen);
-                outputSpeex.Write(encodeBuffer, 0, writen);
-
-                Console.WriteLine($"Encoded Once, encoded size: {writen}");
-            }
-        }
+        Console.WriteLine($"Encode Once, size after: {count}");
     }
 
+
+    // output message
     Console.WriteLine("Speex encode end");
 
+
+    // get encoded bytes
     byte[] speexBytes = speexStream.ToArray();
 
-    fixed (byte* speexBytesPtr = speexBytes)
+
+    // decode
+    // encode and decode buffer
+    short[] frame = new short[decoder.FrameSize];
+    for (int index = 0; index < speexBytes.Length; )
     {
-        fixed (short* bufferPtr = buffer)
-        {
-            int index = 0;
-            int code = 0;
+        int count = speexBytes[index];
+        index++;
 
-            while (index < speexBytes.Length)
-            {
-                int count = speexBytesPtr[index];
-                index++;
+        Span<byte> inputSpan = new Span<byte>(speexBytes, index, count);
+        Span<short> outputSpan = new Span<short>(frame);
+        decoder.DecodeInt(inputSpan, outputSpan);
 
-                Speex.BitsReset(&decodeBits);
-                Speex.BitsReadFrom(&decodeBits, speexBytesPtr + index, count);
-                code = Speex.DecodeInt(decoderState, &decodeBits, bufferPtr);
+        Span<byte> outputByteSpan = MemoryMarshal.Cast<short, byte>(outputSpan);
+        outputPcm.Write(outputByteSpan);
 
-                var outputSpan = new Span<byte>(bufferPtr, buffer.Length * 2);
-                outputPcm.Write(outputSpan);
+        index += count;
 
-                index += count;
-
-                Console.WriteLine($"Decode Once, size before: {count}");
-            }
-        }
+        Console.WriteLine($"Decode Once, size before: {count}");
     }
 
+
+    // output message
     Console.WriteLine("Pcm decode end");
 
+
+    // ok
     Console.WriteLine("OK");
 }
 

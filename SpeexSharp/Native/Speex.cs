@@ -209,11 +209,11 @@ namespace SpeexSharp.Native
         /// Used like the ioctl function to control the encoder parameters
         /// </summary>
         /// <param name="state">Decoder state</param>
-        /// <param name="bits">ioctl-type request (one of the SPEEX_∗ macros)</param>
+        /// <param name="request">ioctl-type request (one of the SPEEX_∗ macros) (<see cref="SetCoderParameter"/> or <see cref="GetCoderParameter"/>)</param>
         /// <param name="ptr">Data exchanged to-from function</param>
         /// <returns></returns>
         [DllImport(DllName, EntryPoint = "speex_decoder_ctl")]
-        public static extern int DecoderCtl(void* state, SpeexBits* bits, void* ptr);
+        public static extern int DecoderCtl(void* state, int request, void* ptr);
 
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace SpeexSharp.Native
         /// Used like the ioctl function to control the encoder parameters
         /// </summary>
         /// <param name="state">Encoder state</param>
-        /// <param name="request">ioctl-type request (one of the SPEEX_∗ macros)</param>
+        /// <param name="request">ioctl-type request (one of the SPEEX_∗ macros) (<see cref="SetCoderParameter"/> or <see cref="GetCoderParameter"/>)</param>
         /// <param name="ptr">Data exchanged to-from function</param>
         /// <returns>0 if no error, -1 if request in unknown, -2 for invalid parameter</returns>
         [DllImport(DllName, EntryPoint = "speex_encoder_ctl")]
@@ -572,7 +572,7 @@ namespace SpeexSharp.Native
         static SpeexMode* s_uwbMode = null;
 
         /// <summary>
-        /// 8000Hz
+        /// 8000Hz, 160
         /// </summary>
         public static SpeexMode* NbMode
         {
@@ -586,7 +586,7 @@ namespace SpeexSharp.Native
         }
 
         /// <summary>
-        /// 16000Hz
+        /// 16000Hz, 320
         /// </summary>
         public static SpeexMode* WbMode
         {
@@ -600,7 +600,7 @@ namespace SpeexSharp.Native
         }
 
         /// <summary>
-        /// 32000Hz
+        /// 32000Hz, 640
         /// </summary>
         public static SpeexMode* UwbMode
         {
