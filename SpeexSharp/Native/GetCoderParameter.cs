@@ -1,9 +1,12 @@
 ﻿namespace SpeexSharp.Native
 {
+    /// <summary>
+    /// Values for getting coder parameter
+    /// </summary>
     public enum GetCoderParameter : int
     {
         /// <summary>
-        /// Get perceptual enhancer status (spx_int32_t) (decoder only)
+        /// Get perceptual enhancer status (int32) (decoder only)
         /// </summary>
         Enh = 1,
 
@@ -53,7 +56,7 @@
         SamplingRate = 25,
 
         /// <summary>
-        /// Get VBR info (mostly used int32ernally)
+        /// Get VBR info (mostly used internally)
         /// </summary>
         RelativeQuality = 29,
 

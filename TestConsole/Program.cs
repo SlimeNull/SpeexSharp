@@ -3,14 +3,16 @@ using System.Runtime.InteropServices;
 using SpeexSharp;
 using SpeexSharp.Native;
 
+Speex.CompatibilityMode = true;
+
 var pcmFileName = "Oriens.pcm";
-var outputSpeexFileName = "Oriens_output.speex";
-var outputPcmFileName = "Oriens_output.pcm";
+var outputSpeexFileName = "output.speex";
+var outputPcmFileName = "output.pcm";
 
 unsafe
 {
     // speex mode
-    var mode = SpeexSharp.SpeexMode.Narrowband;
+    var mode = SpeexSharp.SpeexMode.Wideband;
 
     // init encoder and decoder
     using var encoder = new SpeexEncoder(mode);
@@ -63,7 +65,7 @@ unsafe
 
 
     // decode
-    // encode and decode buffer
+    // frame buffer
     short[] frame = new short[decoder.FrameSize];
     for (int index = 0; index < speexBytes.Length; )
     {

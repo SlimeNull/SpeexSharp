@@ -2,19 +2,22 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Platforms>x86</Platforms>
+    <Platforms>x86;x64;AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpeexSharp\SpeexSharp.csproj" />
+    <PackageReference Include="SpeexSharp" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Oriens.pcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Oriens_full.pcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

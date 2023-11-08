@@ -24,8 +24,14 @@ namespace SpeexSharp.Native
         public void* Data;
 
 
-
+        /// <summary>
+        /// Reserved
+        /// </summary>
         public void* Reserved1;
+
+        /// <summary>
+        /// Reserved
+        /// </summary>
         public int Reserved2;
     }
 }

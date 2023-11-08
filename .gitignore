@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TestConsole/Properties/PublishProfiles/linux64.pubxml
+/TestConsole/Properties/PublishProfiles/win32.pubxml
+/TestConsole/Properties/PublishProfiles/win64.pubxml

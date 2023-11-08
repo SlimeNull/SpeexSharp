@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Platforms>x86</Platforms>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);LibContentTarget</TargetsForTfmSpecificBuildOutput>
+    <Platforms>x86;x64;AnyCPU</Platforms>
     <Title>SpeexSharp</Title>
     <Authors>SlimeNull</Authors>
     <Description>.NET Wrapper for Speex coded</Description>
@@ -16,15 +16,10 @@
     <PackageTags>speex;wrapper</PackageTags>
     <Copyright>Copyright (c) SlimeNull</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.1.0</Version>
   </PropertyGroup>
-
-  <Target Name="LibContentTarget">
-    <ItemGroup>
-      <TfmSpecificPackageFile Include="LibSpeex.dll">
-        <PackagePath>lib\$(TargetFramework)</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
 
   <ItemGroup>
     <None Include="..\README.md">
@@ -32,11 +27,17 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-  
-  <ItemGroup>
-    <None Update="LibSpeex.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+
+  <Target Name="RuntimeDependencies" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="Assets\runtimes\**\*.*" Pack="True" PackagePath="runtimes" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="BuildTransitive" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="Assets\buildTransitive\**\*.*" Pack="True" PackagePath="buildTrasitive"></None>
+    </ItemGroup>
+  </Target>
 
 </Project>

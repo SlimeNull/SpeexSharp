@@ -4,16 +4,21 @@ using SpeexNative = SpeexSharp.Native;
 
 namespace SpeexSharp
 {
+    /// <summary>
+    /// Speex decoder
+    /// </summary>
     public unsafe class SpeexDecoder : IDisposable
     {
         SpeexNative.SpeexBits* _bits;
         void* _decoderState;
 
-        int _frameSize;
-
-        int _quality = 8;
         bool _disposed;
 
+        /// <summary>
+        /// Create an instance of SpeexDecoder
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <exception cref="ArgumentException">Invalid SpeexMode</exception>
         public SpeexDecoder(SpeexMode mode)
         {
             if (!Enum.IsDefined<SpeexMode>(mode))
@@ -29,129 +34,92 @@ namespace SpeexSharp
             FrameSize = GetIntParameter(SpeexNative.GetCoderParameter.FrameSize);
         }
 
+        /// <summary>
+        /// Dispose the current decoder
+        /// </summary>
         ~SpeexDecoder()
         {
             Dispose(false);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public SpeexMode SpeexMode { get; }
+
+        /// <summary>
+        /// The number of samples per frame for the current mode
+        /// </summary>
         public int FrameSize { get; }
 
+        /// <summary>
+        /// Perceptual enhancer status (decoder only)
+        /// </summary>
         public bool Enh 
         { 
             get => GetIntParameter(SpeexNative.GetCoderParameter.Enh) != 0;
             set => SetIntParameter(SpeexNative.SetCoderParameter.Enh, value ? 1 : 0); 
         }
 
-        public int Quality
-        {
-            get => _quality;
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Quality, _quality = value);
-        }
-
+        /// <summary>
+        /// Current low-band mode in use (wideband only)
+        /// </summary>
         public int Mode
         {
             get => GetIntParameter(SpeexNative.GetCoderParameter.Mode);
             set => SetIntParameter(SpeexNative.SetCoderParameter.Mode, value);
         }
 
+        /// <summary>
+        /// Current high-band mode in use (wideband only)
+        /// </summary>
         public int LowMode
         {
             get => GetIntParameter(SpeexNative.GetCoderParameter.LowMode);
             set => SetIntParameter(SpeexNative.SetCoderParameter.LowMode, value);
         }
 
+        /// <summary>
+        /// Current high-band mode in use (wideband only)
+        /// </summary>
         public int HighMode
         {
             get => GetIntParameter(SpeexNative.GetCoderParameter.HighMode);
             set => SetIntParameter(SpeexNative.SetCoderParameter.HighMode, value);
         }
 
-        public int Vbr
+        /// <summary>
+        /// Discontinuous transmission (DTX) status (int32)
+        /// </summary>
+        public bool Dtx
         {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.Vbr);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Vbr, value);
+            get => GetIntParameter(SpeexNative.GetCoderParameter.Dtx) != 0;
+            set => SetIntParameter(SpeexNative.SetCoderParameter.Dtx, value ? 1 : 0);
         }
 
-        public float VbrQuality
+        /// <summary>
+        /// Status of input/output high-pass filtering
+        /// </summary>
+        public bool HighPass
         {
-            get => GetFloatParameter(SpeexNative.GetCoderParameter.VbrQuality);
-            set => SetFloatParameter(SpeexNative.SetCoderParameter.VbrQuality, value);
+            get => GetIntParameter(SpeexNative.GetCoderParameter.HighPass) != 0;
+            set => SetIntParameter(SpeexNative.SetCoderParameter.HighPass, value ? 1 : 0);
         }
 
-        public int Complexity
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.Complexity);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Complexity, value);
-        }
-
-        public int BitRate
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.BitRate);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.BitRate, value);
-        }
-
-        public int SamplingRate
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.SamplingRate);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.SamplingRate, value);
-        }
-
-        public int Vad
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.Vad);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Vad, value);
-        }
-
-        public int Abr
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.Abr);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Abr, value);
-        }
-
-        public int Dtx
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.Dtx);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.Dtx, value);
-        }
-
-        public int SubModeEncoding
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.SubModeEncoding);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.SubModeEncoding, value);
-        }
-
-        public int PlcTuning
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.PlcTuning);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.PlcTuning, value);
-        }
-
-        public int VbrMaxBitRate
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.VbrMaxBitRate);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.VbrMaxBitRate, value);
-        }
-
-        public int HighPass
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.HighPass);
-            set => SetIntParameter(SpeexNative.SetCoderParameter.HighPass, value);
-        }
-
+        /// <summary>
+        /// Get "activity level" of the last decoded frame, i.e. now much damage we cause if we remove the frame
+        /// </summary>
         public int Activity
         {
             get => GetIntParameter(SpeexNative.GetCoderParameter.Activity);
         }
 
+        /// <summary>
+        /// Returns the lookahead used by Speex
+        /// </summary>
         public int Lookahead
         {
             get => GetIntParameter(SpeexNative.GetCoderParameter.Lookahead);
-        }
-
-        public int RelativeQuality
-        {
-            get => GetIntParameter(SpeexNative.GetCoderParameter.RelativeQuality);
         }
 
         private void EnsureNotDisposed()
@@ -168,30 +136,42 @@ namespace SpeexSharp
 
         private void SetIntParameter(SpeexNative.SetCoderParameter parameter, int value)
         {
+            EnsureNotDisposed();
+
             SpeexNative.Speex.EncoderCtl(_decoderState, (int)parameter, &value);
         }
 
         private int GetIntParameter(SpeexNative.GetCoderParameter parameter)
         {
-            int result = 0;
+            EnsureNotDisposed();
 
+            int result = 0;
             SpeexNative.Speex.EncoderCtl(_decoderState, (int)parameter, &result);
             return result;
         }
 
         private void SetFloatParameter(SpeexNative.SetCoderParameter parameter, float value)
         {
+            EnsureNotDisposed();
+
             SpeexNative.Speex.EncoderCtl(_decoderState, (int)parameter, &value);
         }
 
         private float GetFloatParameter(SpeexNative.GetCoderParameter parameter)
         {
-            float result = 0;
+            EnsureNotDisposed();
 
+            float result = 0;
             SpeexNative.Speex.EncoderCtl(_decoderState, (int)parameter, &result);
             return result;
         }
 
+        /// <summary>
+        /// Decode a frame
+        /// </summary>
+        /// <param name="speex">Speex frame for decoding</param>
+        /// <param name="output">Buffer for storing decoded frame</param>
+        /// <returns>return status (0 for no error, -1 for end of stream, -2 corrupt stream)</returns>
         public int Decode(ReadOnlySpan<byte> speex, Span<float> output)
         {
             EnsureNotDisposed();
@@ -207,6 +187,12 @@ namespace SpeexSharp
             }
         }
 
+        /// <summary>
+        /// Decode a frame
+        /// </summary>
+        /// <param name="speex">Speex frame for decoding</param>
+        /// <param name="output">Buffer for storing decoded frame</param>
+        /// <returns>return status (0 for no error, -1 for end of stream, -2 corrupt stream)</returns>
         public int DecodeInt(ReadOnlySpan<byte> speex, Span<short> output)
         {
             EnsureNotDisposed();
@@ -222,9 +208,27 @@ namespace SpeexSharp
             }
         }
 
+        /// <summary>
+        /// Decode a frame
+        /// </summary>
+        /// <param name="speex">Speex frame buffer</param>
+        /// <param name="start">Start index of speex frame</param>
+        /// <param name="length">Length of speex frame</param>
+        /// <param name="output">Buffer for storing decoded frame</param>
+        /// <returns></returns>
+        /// <returns>return status (0 for no error, -1 for end of stream, -2 corrupt stream)</returns>
         public int Decode(byte[] speex, int start, int length, float[] output)
             => Decode(new ReadOnlySpan<byte>(speex, start, length), output);
 
+        /// <summary>
+        /// Decode a frame
+        /// </summary>
+        /// <param name="speex">Speex frame buffer</param>
+        /// <param name="start">Start index of speex frame</param>
+        /// <param name="length">Length of speex frame</param>
+        /// <param name="output">Buffer for storing decoded frame</param>
+        /// <returns></returns>
+        /// <returns>return status (0 for no error, -1 for end of stream, -2 corrupt stream)</returns>
         public int EncodeInt(byte[] speex, int start, int length, short[] output)
             => DecodeInt(new ReadOnlySpan<byte>(speex, start, length), output);
 
@@ -244,6 +248,9 @@ namespace SpeexSharp
             _disposed = true;
         }
 
+        /// <summary>
+        /// Dispose the current decoder
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);

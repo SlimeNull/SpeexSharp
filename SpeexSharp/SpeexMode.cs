@@ -1,5 +1,8 @@
 ﻿namespace SpeexSharp
 {
+    /// <summary>
+    /// SpeexMode ID
+    /// </summary>
     public enum SpeexMode
     {
         /// <summary>

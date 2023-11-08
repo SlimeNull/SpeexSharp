@@ -44,7 +44,14 @@ namespace SpeexSharp.Native
         public int BufferSize;
 
 
+        /// <summary>
+        /// Reserved
+        /// </summary>
         public int Reserved1;
+
+        /// <summary>
+        /// Reseved
+        /// </summary>
         public void* Reserved2;
     }
 }

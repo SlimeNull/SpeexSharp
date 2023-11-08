@@ -29,7 +29,14 @@ namespace SpeexSharp.Native
         public float SmoothRight;
 
 
+        /// <summary>
+        /// Reserved
+        /// </summary>
         public float Reserved1;
+
+        /// <summary>
+        /// Reserved
+        /// </summary>
         public float Reserved2;
     }
 }

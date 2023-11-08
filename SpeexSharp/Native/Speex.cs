@@ -2,10 +2,44 @@
 
 namespace SpeexSharp.Native
 {
+    /// <summary>
+    /// Native Speex APIs
+    /// </summary>
     public static unsafe class Speex
     {
-        public const string DllName = "LibSpeex.dll";
+        static Speex()
+        {
+            EnsurePlatformSupported();
+        }
 
+        static void EnsurePlatformSupported()
+        {
+            if (!IsSupportedPlatform())
+                throw new PlatformNotSupportedException();
+
+            bool IsSupportedPlatform()
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+                    RuntimeInformation.ProcessArchitecture is Architecture.X64 or Architecture.X86)
+                    return true;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+                    RuntimeInformation.ProcessArchitecture is Architecture.X64)
+                    return true;
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Dynamic link library file name
+        /// </summary>
+        public const string DllName = "libspeex";
+
+        /// <summary>
+        /// Whether it is compatible with the origin libspeex.dll
+        /// </summary>
+        public static bool CompatibilityMode { get; set; } = false;
 
         #region Bits
 
@@ -225,7 +259,7 @@ namespace SpeexSharp.Native
 
         /// <summary>
         /// Returns a handle to a newly created decoder state structure. 
-        /// For now, the mode argument can be &nb_mode or &wb_mode. In the future, more modes may be added. 
+        /// For now, the mode argument can be &amp;nb_mode or &amp;wb_mode. In the future, more modes may be added. 
         /// Note that for now if you have more than one channels to decode, you need one state per channel.
         /// </summary>
         /// <param name="mode">Speex mode (one of speex_nb_mode or speex_wb_mode)</param>
@@ -280,7 +314,7 @@ namespace SpeexSharp.Native
 
 
         /// <summary>
-        /// Returns a handle to a newly created Speex encoder state structure. For now, the "mode" argument can be &nb_mode or &wb_mode . In the future, more modes may be added. Note that for now if you have more than one channels to encode, you need one state per channel.
+        /// Returns a handle to a newly created Speex encoder state structure. For now, the "mode" argument can be &amp;nb_mode or &amp;wb_mode . In the future, more modes may be added. Note that for now if you have more than one channels to encode, you need one state per channel.
         /// </summary>
         /// <param name="mode">The mode to use (either speex_nb_mode or speex_wb.mode)</param>
         /// <returns>A newly created encoder state or NULL if state allocation fails</returns>
@@ -328,7 +362,7 @@ namespace SpeexSharp.Native
         /// <param name="frameSize"></param>
         /// <param name="bits"></param>
         [DllImport(DllName, EntryPoint = "speex_encode_stereo_int")]
-        public static extern void EncodeStereoIni(short* data, int frameSize, SpeexBits* bits);
+        public static extern void EncodeStereoInt(short* data, int frameSize, SpeexBits* bits);
 
 
         /// <summary>
@@ -374,7 +408,7 @@ namespace SpeexSharp.Native
         /// </summary>
         /// <param name="bits"></param>
         /// <param name="state"></param>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         [DllImport(DllName, EntryPoint = "speex_default_user_handler")]
         public static extern int DefaultUserHandler(SpeexBits* bits, void* state, void* data);
@@ -579,7 +613,9 @@ namespace SpeexSharp.Native
             get
             {
                 if (s_nbMode == null)
-                    s_nbMode = GetNbMode();
+                {
+                    s_nbMode = CompatibilityMode ? LibGetMode(0) : GetNbMode();
+                }
 
                 return s_nbMode;
             }
@@ -593,7 +629,9 @@ namespace SpeexSharp.Native
             get
             {
                 if (s_wbMode == null)
-                    s_wbMode = GetWbMode();
+                {
+                    s_wbMode = CompatibilityMode ? LibGetMode(1) : GetWbMode();
+                }
 
                 return s_wbMode;
             }
@@ -607,7 +645,9 @@ namespace SpeexSharp.Native
             get
             {
                 if (s_uwbMode == null)
-                    s_uwbMode = GetUwbMode();
+                {
+                    s_uwbMode = CompatibilityMode ? LibGetMode(2) : GetUwbMode();
+                }
 
                 return s_uwbMode;
             }
