@@ -9,7 +9,7 @@
     <Platforms>x86;x64;AnyCPU</Platforms>
     <Title>SpeexSharp</Title>
     <Authors>SlimeNull</Authors>
-    <Description>.NET Wrapper for Speex coded</Description>
+    <Description>.NET Wrapper for Speex codec</Description>
     <PackageProjectUrl>https://github.com/SlimeNull/SpeexSharp</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/SlimeNull/SpeexSharp</RepositoryUrl>
