@@ -169,7 +169,7 @@ namespace SpeexSharp.Native
         /// <param name="buffer"></param>
         /// <param name="bufferSize"></param>
         [DllImport(DllName, EntryPoint = "speex_bits_set_bit_buffer")]
-        public static extern void BitsSetBitBuffer(SpeexBits bits, void* buffer, int bufferSize);
+        public static extern void BitsSetBitBuffer(SpeexBits* bits, void* buffer, int bufferSize);
 
 
         /// <summary>
